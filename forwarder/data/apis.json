@@ -1,0 +1,40 @@
+[
+  {
+    "id": "weather-demo",
+    "name": "JSON Placeholder Demo",
+    "description": "Demo API for testing x402 payments",
+    "baseUrl": "https://jsonplaceholder.typicode.com",
+    "owner": "0x9E378843507BF367b470777cFa57D61e8633E628",
+    "endpoints": [
+      {
+        "path": "/users",
+        "method": "GET",
+        "price": "1000000",
+        "description": "Get all users"
+      },
+      {
+        "path": "/posts",
+        "method": "GET",
+        "price": "2000000",
+        "description": "Get all posts"
+      }
+    ],
+    "createdAt": "2025-11-23T15:50:00.000Z"
+  },
+  {
+    "id": "vi108oq",
+    "name": "TESTING",
+    "description": "JUST A TEST",
+    "baseUrl": "https://jsonplaceholder.typicode.com",
+    "owner": "0x9E378843507BF367b470777cFa57D61e8633E628",
+    "endpoints": [
+      {
+        "path": "/users",
+        "method": "GET",
+        "price": "10000",
+        "description": ""
+      }
+    ],
+    "createdAt": "2025-11-24T16:40:16.405Z"
+  }
+]
