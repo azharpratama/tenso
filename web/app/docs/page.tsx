@@ -141,7 +141,7 @@ export default function DocsPage() {
                                         {
                                             step: 1,
                                             title: 'Clone Repository',
-                                            code: 'git clone https://github.com/yourusername/tenso-depin.git\ncd tenso-depin'
+                                            code: 'git clone https://github.com/azharpratama/tenso.git\ncd tenso-depin'
                                         },
                                         {
                                             step: 2,
@@ -198,7 +198,7 @@ export default function DocsPage() {
                                     {
                                         step: 1,
                                         title: 'Clone Repository',
-                                        code: 'git clone https://github.com/yourusername/tenso-depin.git\ncd tenso-depin'
+                                        code: 'git clone https://github.com/azharpratama/tenso.git\ncd tenso-depin'
                                     },
                                     {
                                         step: 2,
@@ -599,7 +599,7 @@ Headers:
 
                             <div className="grid md:grid-cols-2 gap-4">
                                 <a
-                                    href="https://github.com/yourusername/tenso-depin"
+                                    href="https://github.com/azharpratama/tenso"
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="p-4 bg-[#0C0D10] border border-[#3AF2FF]/20 rounded-lg hover:border-[#3AF2FF]/40 transition-all flex items-center gap-3 group"

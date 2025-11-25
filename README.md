@@ -2,7 +2,7 @@
 
 <div align="center">
 
-![Tenso Logo](https://via.placeholder.com/200x200?text=TENSO)
+![Tenso Logo](https://assets.hackquest.io/hackathons/projects/logo/fZwGR5d7Q4ovBor4t9bRH.png)
 
 **Bridging Web2 APIs to AI Agents through DePIN**
 
@@ -12,70 +12,22 @@
 
 </div>
 
-## Overview
+## 💡 The Problem
+- **Web2 APIs** cannot accept crypto payments natively.
+- **AI Agents** cannot use credit cards or pass KYC checks.
+- **Existing Solutions** are centralized and charge high fees (30%+).
 
-Tenso is a decentralized API marketplace that enables web2 companies to monetize their APIs through crypto payments **without changing their infrastructure**. AI agents can directly access paid APIs using USDC.
+## 🚀 The Solution: Tenso
+Tenso is a **DePIN (Decentralized Physical Infrastructure Network)** of payment gateway nodes that enables autonomous AI agents to pay for Web2 API access using crypto, without API providers needing to change a single line of code.
 
-**Problem**: Web2 APIs can't accept crypto payments. AI agents need programmable access to paid APIs.
+We implement the **x402 Payment Protocol** (HTTP 402 Payment Required) over a decentralized network:
+1.  **Gasless Payments**: Agents sign EIP-712 messages to authorize payments (no gas fees).
+2.  **DePIN Nodes**: Independent operators run "Forwarder Nodes" that verify payments and route requests.
+3.  **Fair Revenue Split**: Smart contracts enforce a **90/8/2 split** on-chain.
 
-**Solution**: Tenso acts as a DePIN layer that handles crypto payments and forwards requests to existing APIs.
+---
 
-## DePIN Category
-
-**DeCDN / Oracles** - Decentralized content delivery network and data oracle infrastructure
-
-## 🚀 Quick Start (5 Steps)
-
-### Option 1: Docker (Recommended! ⭐)
-
-```bash
-# 1. Clone repo
-git clone https://github.com/yourusername/tenso-depin.git
-cd tenso-depin
-
-# 2. Setup environment (ONE file only!)
-cp .env.example .env
-
-# 3. Edit .env and add:
-# - PRIVATE_KEY (wallet private key)
-# - NODE_OPERATOR_ADDRESS (your address)
-nano .env  # or use your favorite editor
-
-# 4. Start with Docker
-docker-compose up
-
-# 5. Open browser
-# http://localhost:3000
-```
-
-### Option 2: Manual Setup
-
-```bash
-# 1. Clone repo
-git clone https://github.com/yourusername/tenso-depin.git
-cd tenso-depin
-
-# 2. Setup environment
-cp .env.example .env
-nano .env  # Edit with your credentials
-
-# 3. Install dependencies
-cd web && npm install
-cd ../forwarder && npm install
-cd ..
-
-# 4. Run services (2 terminals)
-# Terminal 1:
-cd forwarder && npm start
-
-# Terminal 2:
-cd web && npm run dev
-
-# 5. Open browser
-# http://localhost:3000
-```
-
-## � Arsitektur Sederhana
+## 🏗️ Architecture
 
 ```
 ┌─────────────┐       ┌──────────────┐       ┌─────────────┐
@@ -104,25 +56,76 @@ cd web && npm run dev
                  └─ NodeRegistry (DePIN)
 ```
 
-### Payment Flow (On-chain ↔ Off-chain)
+### DePIN Network Topology
+```
+┌─────────────────────────────────────────────────┐
+│          Forwarder Node Network                 │
+│                                                 │
+│  ┌──────────┐  ┌──────────┐  ┌──────────┐     │
+│  │  Node 1  │  │  Node 2  │  │  Node 3  │     │
+│  │ US-East  │  │ EU-West  │  │  Asia    │     │
+│  │ Earns 8% │  │ Earns 8% │  │ Earns 8% │     │
+│  └──────────┘  └──────────┘  └──────────┘     │
+│                                                 │
+│  Anyone can run a node • Stake TENSO tokens     │
+│  Geographic distribution • Earn USDC fees       │
+└─────────────────────────────────────────────────┘
+```
 
-**Off-chain (DePIN):**
-- User browses APIs in marketplace
-- Call API without payment → 402 error
-- Sign payment with MetaMask (EIP-712, gasless!)
+## ⚙️ How It Works
 
-**On-chain (Base Sepolia):**
-- Forwarder verify signature
-- Execute payment split via PaymentRouter:
-  - 90% → API Owner
-  - 8% → Node Operator  
-  - 2% → Protocol Treasury
-- Transaction confirmed
+### For AI Agents (Buyers)
+1. **Discover API** on Tenso marketplace
+2. **Call endpoint** without payment → Receive `402 Payment Required`
+3. **Sign USDC payment** (gasless via EIP-712)
+4. **Retry with `X-PAYMENT` header** → Get data!
 
-**Off-chain (DePIN):**
-- Forward request ke upstream API
-- Return response + TX hash
-- Log analytics
+**Example Integration (Python):**
+```python
+import requests
+# 1. Call API (Expect 402)
+response = requests.get("https://node1.tenso.network/api/weather")
+
+# 2. Sign Payment (EIP-712)
+signature = sign_usdc_permit(amount=1.0, payTo=response.json()["payTo"])
+
+# 3. Retry with Payment
+data = requests.get(
+    "https://node1.tenso.network/api/weather",
+    headers={"X-PAYMENT": signature}
+)
+```
+
+### For API Providers (Sellers)
+1. **Register Endpoint**: Set price in USDC (e.g., $0.01/call)
+2. **Receive Payments**: 90% of fees go directly to your wallet
+3. **No Code Changes**: Your API stays exactly the same. Tenso handles the paywall.
+
+### For Node Operators (DePIN)
+1. **Stake TENSO**: 10,000 tokens (Testnet: Free)
+2. **Run Forwarder**: Simple Docker container
+3. **Earn 8%**: Process payments and route requests
+4. **Reputation**: Higher uptime = more traffic
+
+---
+
+## 💰 Tokenomics & Revenue Split
+
+Tenso enforces a strict **90/8/2** revenue split on-chain for every transaction.
+
+| Party | Share | Role |
+|-------|-------|------|
+| **API Provider** | **90%** | Creates value (Data/Service) |
+| **Node Operator** | **8%** | Provides infrastructure (DePIN) |
+| **Protocol** | **2%** | Treasury & Development |
+
+**Example:**
+For a **$1.00** API call:
+- **$0.90** → API Owner
+- **$0.08** → Node Operator
+- **$0.02** → Protocol Treasury
+
+*All payments are settled instantly in USDC.*
 
 ## 🛠️ Tech Stack
 
@@ -244,41 +247,45 @@ USDC_ADDRESS=0x036CbD53842c5426634e7929541eC2318f3dCF7e
 ### Track
 DePIN Build Track - **DeCDN / Oracles**
 
-### One-Pager
-See [ONEPAGER.md](./ONEPAGER.md) for executive summary.
+### ✅ Key Achievements
+- **x402 Forwarder**: Fully functional single-node implementation
+- **Gasless Payments**: EIP-712 signature verification
+- **Smart Contracts**: Deployed `NodeRegistry`, `PaymentRouter`, `PaymentVerifier`
+- **Fair Revenue**: 90/8/2 split verified on-chain
+- **Dashboards**: Seller analytics, Node Operator staking, Marketplace stats
+- **DevOps**: One-command Docker deployment
 
-- [x] Docker deployment
+### 🗺️ Roadmap
 
-### Phase 2 (Post-Hackathon)
+#### Phase 2 (Post-Hackathon)
 - [ ] TENSO token for node staking
 - [ ] Multi-chain support (Ethereum, Polygon)
 - [ ] AI agent SDK (Python, JavaScript)
 - [ ] API rate limiting & authentication
 - [ ] Decentralized storage (IPFS/Arweave)
-- [ ] Load balancing across nodes
 
-### Phase 3 (Production)
+#### Phase 3 (Production)
 - [ ] Mainnet deployment
 - [ ] Enterprise API onboarding
 - [ ] Advanced analytics dashboard
 - [ ] SLA guarantees with reputation system
 - [ ] Mobile app
 
+## 📸 Gallery
+
+| Landing Page | Marketplace |
+|:---:|:---:|
+| ![Landing Page](assets/landing_page.png) | ![Marketplace](assets/marketplace.png) |
+| **Seller Dashboard** | **Node Operator Dashboard** |
+| ![Seller Dashboard](assets/seller_dashboard.png) | ![Node Operator](assets/node_operator.png) |
+| **Analytics** | **Documentation** |
+| ![Analytics](assets/analytics.png) | ![Documentation](assets/docs.png) |
+
 ## 🤝 Contributing
 
 We welcome contributions from the community! Whether it's fixing bugs, improving documentation, or suggesting new features, your help is appreciated.
 
-### How to Contribute
-1. **Fork the Project**
-2. **Create your Feature Branch** (`git checkout -b feature/AmazingFeature`)
-3. **Commit your Changes** (`git commit -m 'Add some AmazingFeature'`)
-4. **Push to the Branch** (`git push origin feature/AmazingFeature`)
-5. **Open a Pull Request**
-
-### Development Guidelines
-- Use **Conventional Commits** for commit messages
-- Ensure all new code is typed (TypeScript)
-- Run `npm run lint` before committing
+Please read our [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests.
 
 ---
 
@@ -304,8 +311,10 @@ We welcome contributions from the community! Whether it's fixing bugs, improving
 
 - **[Base](https://base.org)** - For the fast, low-cost L2 infrastructure
 - **[Coinbase Developer Platform](https://www.coinbase.com/developer-platform)** - For RPC and Paymaster tools
+- **[x402 Protocol](https://x402.org)** - For the open standard for internet-native payments
 - **[Wagmi](https://wagmi.sh) & [Viem](https://viem.sh)** - For best-in-class Ethereum hooks
 - **[Hono](https://hono.dev)** - For the ultra-fast edge web framework
+- **[PinGo](https://pingo.io)** - For hosting the DePIN Hackathon
 
 ## 📄 License
 
@@ -313,9 +322,9 @@ MIT License - see [LICENSE](LICENSE)
 
 ## 🔗 Links
 
-- **Live Demo**: http://localhost:3000
-- **Documentation**: http://localhost:3000/docs
-- **GitHub Repo**: https://github.com/yourusername/tenso-depin
+- **Live Demo**: https://tenso.network
+- **Documentation**: https://tenso.network/docs
+- **GitHub Repo**: https://github.com/azharpratama/tenso
 - **Base Sepolia Explorer**: https://sepolia.basescan.org/
 
 ---
@@ -324,6 +333,6 @@ MIT License - see [LICENSE](LICENSE)
 
 **Built for PinGo Indonesian DePIN Hackathon 2025** 🚀
 
-[GitHub](https://github.com/yourusername/tenso-depin) • [Demo](http://localhost:3000) • [Docs](http://localhost:3000/docs)
+[GitHub](https://github.com/azharpratama/tenso) • [Demo](https://tenso.network) • [Docs](https://tenso.network/docs)
 
 </div>
