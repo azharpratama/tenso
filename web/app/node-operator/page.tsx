@@ -69,33 +69,30 @@ export default function NodeOperatorPage() {
                                 <p className="text-xs text-blue-400">TENSO token staking coming soon</p>
                             </div>
                         </div>
-                        <div className="flex items-center gap-4">
-                            <ConnectWallet />
-                            {isConnected && (
-                                <div className="flex gap-2 bg-[#111318] rounded-lg p-1">
+                        {isConnected && (
+                            <div className="flex gap-2 bg-[#111318] rounded-lg p-1">
+                                <button
+                                    onClick={() => setView('dashboard')}
+                                    className={`px-4 py-2 rounded-md transition-all ${view === 'dashboard'
+                                        ? 'bg-[#3AF2FF] text-black'
+                                        : 'text-gray-400 hover:text-white'
+                                        }`}
+                                >
+                                    Dashboard
+                                </button>
+                                {!isRegistered && (
                                     <button
-                                        onClick={() => setView('dashboard')}
-                                        className={`px-4 py-2 rounded-md transition-all ${view === 'dashboard'
+                                        onClick={() => setView('register')}
+                                        className={`px-4 py-2 rounded-md transition-all ${view === 'register'
                                             ? 'bg-[#3AF2FF] text-black'
                                             : 'text-gray-400 hover:text-white'
                                             }`}
                                     >
-                                        Dashboard
+                                        Register
                                     </button>
-                                    {!isRegistered && (
-                                        <button
-                                            onClick={() => setView('register')}
-                                            className={`px-4 py-2 rounded-md transition-all ${view === 'register'
-                                                ? 'bg-[#3AF2FF] text-black'
-                                                : 'text-gray-400 hover:text-white'
-                                                }`}
-                                        >
-                                            Register
-                                        </button>
-                                    )}
-                                </div>
-                            )}
-                        </div>
+                                )}
+                            </div>
+                        )}
                     </div>
 
                     {view === 'dashboard' ? (
@@ -124,7 +121,9 @@ export default function NodeOperatorPage() {
                                     <div className="flex items-center justify-between mb-4">
                                         <DollarSign className="w-6 h-6 text-[#3AF2FF]" />
                                     </div>
-                                    <div className="text-3xl font-bold mb-1 font-mono">$24.67</div>
+                                    <div className="text-3xl font-bold mb-1 font-mono">
+                                        {isRegistered ? '$24.67' : '$0.00'}
+                                    </div>
                                     <div className="text-sm text-gray-400">Earnings Today</div>
                                 </div>
 
@@ -133,7 +132,9 @@ export default function NodeOperatorPage() {
                                     <div className="flex items-center justify-between mb-4">
                                         <Zap className="w-6 h-6 text-[#42E7D6]" />
                                     </div>
-                                    <div className="text-3xl font-bold mb-1">1,247</div>
+                                    <div className="text-3xl font-bold mb-1">
+                                        {isRegistered ? '1,247' : '0'}
+                                    </div>
                                     <div className="text-sm text-gray-400">Requests Today</div>
                                 </div>
 

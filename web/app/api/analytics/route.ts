@@ -38,15 +38,23 @@ export async function POST(request: Request) {
 }
 
 // Get analytics summary
-export async function GET() {
+export async function GET(request: Request) {
+    const { searchParams } = new URL(request.url);
+    const apiId = searchParams.get('apiId');
+
     const analytics = getAnalytics();
 
-    const totalVolume = analytics.reduce((sum: number, call: any) => sum + (call.amount || 0), 0);
-    const totalCalls = analytics.length;
+    // Filter by API ID if provided
+    const filteredAnalytics = apiId
+        ? analytics.filter((call: any) => call.apiId === apiId)
+        : analytics;
+
+    const totalVolume = filteredAnalytics.reduce((sum: number, call: any) => sum + (call.amount || 0), 0);
+    const totalCalls = filteredAnalytics.length;
 
     return NextResponse.json({
         totalVolume,
         totalCalls,
-        recentCalls: analytics.slice(-10).reverse()
+        recentCalls: filteredAnalytics.slice(-10).reverse()
     });
 }

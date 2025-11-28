@@ -76,7 +76,7 @@ export default function ApiDetailsPage() {
     };
 
     const handleCallWithPayment = async () => {
-        if (!selectedEndpoint || !address) return;
+        if (!selectedEndpoint || !address || !api) return;
 
         setStep('signing');
 
@@ -150,9 +150,25 @@ export default function ApiDetailsPage() {
             const data = await res.json();
             const paymentResponse = res.headers.get('X-PAYMENT-RESPONSE');
 
+            // Extract TX hash from payment response header or from response data
+            let extractedTxHash = '';
+
             if (paymentResponse) {
-                const decoded = JSON.parse(atob(paymentResponse));
-                setTxHash(decoded.txHash);
+                try {
+                    const decoded = JSON.parse(atob(paymentResponse));
+                    extractedTxHash = decoded.txHash || decoded.transactionHash || '';
+                } catch (e) {
+                    console.error('Failed to decode payment response:', e);
+                }
+            }
+
+            // Fallback: check if txHash is in response body
+            if (!extractedTxHash && data.txHash) {
+                extractedTxHash = data.txHash;
+            }
+
+            if (extractedTxHash) {
+                setTxHash(extractedTxHash);
 
                 // Log this API call to analytics
                 try {
@@ -163,12 +179,14 @@ export default function ApiDetailsPage() {
                             apiId: api.id,
                             endpoint: selectedEndpoint.path,
                             amount: parseFloat(selectedEndpoint.price) / 1_000_000, // Convert to decimal USDC
-                            txHash: decoded.txHash
+                            txHash: extractedTxHash
                         })
                     });
                 } catch (e) {
                     console.error('Failed to log analytics:', e);
                 }
+            } else {
+                console.warn('No TX hash found in response');
             }
 
             setApiResponse(data);
@@ -210,7 +228,6 @@ export default function ApiDetailsPage() {
                                 <p className="text-gray-400">{api.description || 'No description'}</p>
                             </div>
                         </div>
-                        <ConnectWallet />
                     </div>
 
                     <div className="grid lg:grid-cols-3 gap-8">

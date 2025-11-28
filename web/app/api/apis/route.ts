@@ -56,3 +56,33 @@ export async function DELETE(request: Request) {
     saveApis(filteredApis);
     return NextResponse.json({ success: true });
 }
+
+export async function PUT(request: Request) {
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get('id');
+    const body = await request.json();
+
+    if (!id) {
+        return NextResponse.json({ error: 'API ID required' }, { status: 400 });
+    }
+
+    const apis = getApis();
+    const index = apis.findIndex((api: any) => api.id === id);
+
+    if (index === -1) {
+        return NextResponse.json({ error: 'API not found' }, { status: 404 });
+    }
+
+    // Preserve original creation date and owner if not provided
+    const updatedApi = {
+        ...apis[index],
+        ...body,
+        id: id, // Ensure ID doesn't change
+        updatedAt: new Date().toISOString()
+    };
+
+    apis[index] = updatedApi;
+    saveApis(apis);
+
+    return NextResponse.json(updatedApi);
+}

@@ -21,6 +21,11 @@ interface API {
         description: string;
     }>;
     createdAt: string;
+    // Add analytics for each API
+    analytics?: {
+        revenue: number;
+        calls: number;
+    };
 }
 
 export default function SellerDashboardPage() {
@@ -57,7 +62,29 @@ export default function SellerDashboardPage() {
                 api.owner?.toLowerCase() === address?.toLowerCase()
             );
 
-            setMyApis(mine);
+            // Load analytics for each API
+            const apisWithAnalytics = await Promise.all(
+                mine.map(async (api: API) => {
+                    try {
+                        const analyticsRes = await fetch(`/api/analytics?apiId=${api.id}`);
+                        const apiAnalytics = await analyticsRes.json();
+                        return {
+                            ...api,
+                            analytics: {
+                                revenue: apiAnalytics.totalVolume,
+                                calls: apiAnalytics.totalCalls
+                            }
+                        };
+                    } catch (e) {
+                        return {
+                            ...api,
+                            analytics: { revenue: 0, calls: 0 }
+                        };
+                    }
+                })
+            );
+
+            setMyApis(apisWithAnalytics);
         } catch (e) {
             console.error('Failed to load APIs:', e);
         } finally {
@@ -83,23 +110,19 @@ export default function SellerDashboardPage() {
     };
 
     const getTotalRevenue = () => {
-        return `$${analytics.totalVolume.toFixed(2)}`;
+        return `$${analytics.totalVolume.toFixed(3)}`;
     };
 
     const getTotalCalls = () => {
         return analytics.totalCalls;
     };
 
-    const getApiRevenue = (apiId: string) => {
-        // Mock: Split total revenue by number of APIs
-        const perApi = myApis.length > 0 ? analytics.totalVolume / myApis.length : 0;
-        return `$${perApi.toFixed(2)}`;
+    const getApiRevenue = (api: API) => {
+        return `$${(api.analytics?.revenue || 0).toFixed(3)}`;
     };
 
-    const getApiCalls = (apiId: string) => {
-        // Mock: Split total calls by number of APIs
-        const perApi = myApis.length > 0 ? Math.floor(analytics.totalCalls / myApis.length) : 0;
-        return perApi;
+    const getApiCalls = (api: API) => {
+        return api.analytics?.calls || 0;
     };
 
     return (
@@ -221,11 +244,11 @@ export default function SellerDashboardPage() {
                                             <div className="grid grid-cols-3 gap-4 mb-4">
                                                 <div className="p-3 bg-[#111318] rounded-lg">
                                                     <div className="text-xs text-gray-400 mb-1">Revenue</div>
-                                                    <div className="text-lg font-mono font-bold">{getApiRevenue(api.id)}</div>
+                                                    <div className="text-lg font-mono font-bold">{getApiRevenue(api)}</div>
                                                 </div>
                                                 <div className="p-3 bg-[#111318] rounded-lg">
                                                     <div className="text-xs text-gray-400 mb-1">Calls</div>
-                                                    <div className="text-lg font-bold">{getApiCalls(api.id)}</div>
+                                                    <div className="text-lg font-bold">{getApiCalls(api)}</div>
                                                 </div>
                                                 <div className="p-3 bg-[#111318] rounded-lg">
                                                     <div className="text-xs text-gray-400 mb-1">Endpoints</div>

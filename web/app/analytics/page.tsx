@@ -1,7 +1,9 @@
 'use client';
 
 import NodeNetworkBackground from '@/components/NodeNetworkBackground';
-import { Activity, Globe, Server, Zap, Map, Cpu, Network } from 'lucide-react';
+import { Activity, Globe, Server, Zap, Map, Cpu, Network, DollarSign, TrendingUp } from 'lucide-react';
+import { useState, useEffect } from "react";
+import { ComposableMap, Geographies, Geography, Marker, Line } from "react-simple-maps";
 
 export default function AnalyticsPage() {
     return (
@@ -61,11 +63,166 @@ export default function AnalyticsPage() {
                                 <Map className="w-5 h-5 text-[#3AF2FF]" />
                                 Node Distribution
                             </h3>
-                            <div className="flex-1 flex items-center justify-center border border-dashed border-gray-800 rounded-lg bg-[#0C0D10]/50">
-                                <div className="text-center">
-                                    <Globe className="w-16 h-16 text-gray-700 mx-auto mb-4" />
-                                    <p className="text-gray-500">Interactive Map Visualization</p>
-                                    <p className="text-xs text-gray-600">(Loading WebGL Context...)</p>
+                            <div className="flex-1 relative bg-gradient-to-br from-[#0C0D10] to-[#111318] rounded-lg overflow-hidden border border-gray-800 min-h-[400px]">
+                                <ComposableMap
+                                    projection="geoMercator"
+                                    projectionConfig={{
+                                        scale: 110,
+                                        center: [0, 15]
+                                    }}
+                                    style={{ width: "100%", height: "100%" }}
+                                >
+                                    <Geographies geography="/world.geo.json">
+                                        {({ geographies }) =>
+                                            geographies.map((geo) => (
+                                                <Geography
+                                                    key={geo.rsmKey}
+                                                    geography={geo}
+                                                    fill="#2a3440"
+                                                    stroke="#1e2530"
+                                                    strokeWidth={0.5}
+                                                    style={{
+                                                        default: { outline: 'none' },
+                                                        hover: { outline: 'none', fill: '#3a4450' },
+                                                        pressed: { outline: 'none' }
+                                                    }}
+                                                />
+                                            ))
+                                        }
+                                    </Geographies>
+
+                                    {/* City nodes with actual lat/long coordinates */}
+                                    {[
+                                        { coords: [-122.4194, 37.7749] as [number, number], label: "SF", size: 10, color: "#3AF2FF", nodes: 120 },
+                                        { coords: [-74.0060, 40.7128] as [number, number], label: "NYC", size: 12, color: "#3AF2FF", nodes: 150 },
+                                        { coords: [-99.1332, 19.4326] as [number, number], label: "MEX", size: 8, color: "#3AF2FF", nodes: 80 },
+                                        { coords: [-0.1276, 51.5074] as [number, number], label: "LON", size: 11, color: "#42E7D6", nodes: 145 },
+                                        { coords: [2.3522, 48.8566] as [number, number], label: "PAR", size: 9, color: "#42E7D6", nodes: 98 },
+                                        { coords: [13.4050, 52.5200] as [number, number], label: "BER", size: 8, color: "#42E7D6", nodes: 75 },
+                                        { coords: [-46.6333, -23.5505] as [number, number], label: "SAO", size: 7, color: "#2EE59D", nodes: 52 },
+                                        { coords: [3.3792, 6.5244] as [number, number], label: "LAG", size: 6, color: "#FFC247", nodes: 23 },
+                                        { coords: [103.8198, 1.3521] as [number, number], label: "SIN", size: 10, color: "#A78BFA", nodes: 88 },
+                                        { coords: [139.6917, 35.6895] as [number, number], label: "TOK", size: 12, color: "#A78BFA", nodes: 112 },
+                                        { coords: [114.1095, 22.3964] as [number, number], label: "HKG", size: 9, color: "#A78BFA", nodes: 95 },
+                                        { coords: [151.2093, -33.8688] as [number, number], label: "SYD", size: 7, color: "#FF5C5C", nodes: 18 },
+                                    ].map((city, i) => (
+                                        <Marker key={i} coordinates={city.coords}>
+                                            {/* Outer glow */}
+                                            <circle
+                                                r={city.size * 1.5}
+                                                fill={city.color}
+                                                opacity={0.15}
+                                                className="animate-pulse"
+                                                style={{ animationDuration: '2s', animationDelay: `${i * 0.1}s` }}
+                                            />
+                                            {/* Main dot */}
+                                            <circle
+                                                r={city.size}
+                                                fill={city.color}
+                                                className="cursor-pointer hover:opacity-80 transition-opacity animate-pulse"
+                                                style={{
+                                                    animationDuration: '1.5s',
+                                                    animationDelay: `${i * 0.1}s`,
+                                                    filter: 'drop-shadow(0 0 6px currentColor)'
+                                                }}
+                                            >
+                                                <title>{`${city.label}: ${city.nodes} active nodes`}</title>
+                                            </circle>
+                                            {/* Label */}
+                                            <text
+                                                textAnchor="middle"
+                                                y={city.size + 16}
+                                                style={{
+                                                    fontFamily: 'monospace',
+                                                    fontSize: '10px',
+                                                    fontWeight: 700,
+                                                    fill: city.color,
+                                                    textShadow: `0 0 8px ${city.color}`,
+                                                    pointerEvents: 'none'
+                                                }}
+                                            >
+                                                {city.label}
+                                            </text>
+                                        </Marker>
+                                    ))}
+
+                                    {/* Connection lines */}
+                                    <Line
+                                        from={[-122.4194, 37.7749]}
+                                        to={[-74.0060, 40.7128]}
+                                        stroke="#3AF2FF"
+                                        strokeWidth={1}
+                                        strokeLinecap="round"
+                                        strokeDasharray="5,5"
+                                        opacity={0.3}
+                                    />
+                                    <Line
+                                        from={[-74.0060, 40.7128]}
+                                        to={[-0.1276, 51.5074]}
+                                        stroke="#3AF2FF"
+                                        strokeWidth={1}
+                                        strokeLinecap="round"
+                                        strokeDasharray="5,5"
+                                        opacity={0.3}
+                                    />
+                                    <Line
+                                        from={[-0.1276, 51.5074]}
+                                        to={[2.3522, 48.8566]}
+                                        stroke="#42E7D6"
+                                        strokeWidth={1}
+                                        strokeLinecap="round"
+                                        strokeDasharray="5,5"
+                                        opacity={0.3}
+                                    />
+                                    <Line
+                                        from={[2.3522, 48.8566]}
+                                        to={[103.8198, 1.3521]}
+                                        stroke="#42E7D6"
+                                        strokeWidth={1}
+                                        strokeLinecap="round"
+                                        strokeDasharray="5,5"
+                                        opacity={0.3}
+                                    />
+                                    <Line
+                                        from={[103.8198, 1.3521]}
+                                        to={[114.1095, 22.3964]}
+                                        stroke="#A78BFA"
+                                        strokeWidth={1}
+                                        strokeLinecap="round"
+                                        strokeDasharray="5,5"
+                                        opacity={0.3}
+                                    />
+                                    <Line
+                                        from={[114.1095, 22.3964]}
+                                        to={[139.6917, 35.6895]}
+                                        stroke="#A78BFA"
+                                        strokeWidth={1}
+                                        strokeLinecap="round"
+                                        strokeDasharray="5,5"
+                                        opacity={0.3}
+                                    />
+                                    <Line
+                                        from={[139.6917, 35.6895]}
+                                        to={[151.2093, -33.8688]}
+                                        stroke="#A78BFA"
+                                        strokeWidth={1}
+                                        strokeLinecap="round"
+                                        strokeDasharray="5,5"
+                                        opacity={0.3}
+                                    />
+                                </ComposableMap>
+                                {/* Legend */}            <div className="absolute bottom-4 left-4 bg-[#0C0D10]/90 backdrop-blur-sm border border-gray-800 rounded-lg p-3">
+                                    <div className="text-xs text-gray-400 mb-2 font-semibold">Global Network</div>
+                                    <div className="flex gap-4 text-xs">
+                                        <div className="flex items-center gap-1.5">
+                                            <div className="w-2.5 h-2.5 rounded-full bg-[#3AF2FF] animate-pulse"></div>
+                                            <span>Active Nodes</span>
+                                        </div>
+                                        <div className="flex items-center gap-1.5">
+                                            <div className="w-4 h-0.5 bg-gray-600"></div>
+                                            <span>Routes</span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>

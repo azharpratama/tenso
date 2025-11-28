@@ -75,5 +75,26 @@
     "amount": 0.01,
     "timestamp": 1764002444091,
     "txHash": null
+  },
+  {
+    "apiId": "vi108oq",
+    "endpoint": "/users",
+    "amount": 0.01,
+    "timestamp": 1764271983071,
+    "txHash": "0xd7e20981e2844781ac8d8c6d07b2e29a91c8ecb7898db821eff16768b87b1c4e"
+  },
+  {
+    "apiId": "cfhd5n4",
+    "endpoint": "/users",
+    "amount": 0.001,
+    "timestamp": 1764272102794,
+    "txHash": "0xf27d3f4449caeeba29626a69897aa26df792898a6482726c59301644a3b6de7c"
+  },
+  {
+    "apiId": "weather-demo",
+    "endpoint": "/posts",
+    "amount": 0.02,
+    "timestamp": 1764287584511,
+    "txHash": "0xcdf3042931f2c62d55fef136d7cdb752a36833b1b2ce3485fcaf8e977b2d6bca"
   }
 ]

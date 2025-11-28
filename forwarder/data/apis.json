@@ -9,17 +9,18 @@
       {
         "path": "/users",
         "method": "GET",
-        "price": "1000000",
+        "price": "10000",
         "description": "Get all users"
       },
       {
         "path": "/posts",
         "method": "GET",
-        "price": "2000000",
+        "price": "20000",
         "description": "Get all posts"
       }
     ],
-    "createdAt": "2025-11-23T15:50:00.000Z"
+    "createdAt": "2025-11-23T15:50:00.000Z",
+    "updatedAt": "2025-11-27T23:43:53.138Z"
   },
   {
     "id": "vi108oq",

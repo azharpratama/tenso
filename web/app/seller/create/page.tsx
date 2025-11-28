@@ -22,6 +22,7 @@ export default function CreateAPIPage() {
     const [apiName, setApiName] = useState('');
     const [description, setDescription] = useState('');
     const [baseUrl, setBaseUrl] = useState('');
+    const [apiKey, setApiKey] = useState('');
     const [endpoints, setEndpoints] = useState<Endpoint[]>([
         { path: '/endpoint', method: 'GET', price: '1.0', description: '' }
     ]);
@@ -71,6 +72,7 @@ export default function CreateAPIPage() {
             name: apiName,
             description,
             baseUrl,
+            apiKey: apiKey || undefined, // Optional: only if provided
             owner: address,
             endpoints: endpointsWithConvertedPrices,
             createdAt: new Date().toISOString()
@@ -189,6 +191,22 @@ export default function CreateAPIPage() {
                                             placeholder="https://api.example.com"
                                             className="w-full px-4 py-3 bg-[#0C0D10] border border-[#3AF2FF]/30 rounded-lg focus:border-[#3AF2FF] focus:outline-none font-mono text-sm"
                                         />
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-sm font-medium mb-2">
+                                            API Key (Optional)
+                                        </label>
+                                        <input
+                                            type="password"
+                                            value={apiKey}
+                                            onChange={(e) => setApiKey(e.target.value)}
+                                            placeholder="sk_live_abc123... (for premium/protected APIs)"
+                                            className="w-full px-4 py-3 bg-[#0C0D10] border border-[#FFC247]/30 rounded-lg focus:border-[#FFC247] focus:outline-none font-mono text-sm"
+                                        />
+                                        <p className="text-xs text-gray-500 mt-1">
+                                            🔒 For V2: Keys will be encrypted and stored securely. Leave empty for public APIs.
+                                        </p>
                                     </div>
 
                                     {/* Endpoints */}
