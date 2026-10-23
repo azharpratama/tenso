@@ -320,19 +320,21 @@ Please read our [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of co
 
 MIT License - see [LICENSE](LICENSE)
 
-## 🔗 Links
+## 🔗 Links & Deployed Contracts (Base Sepolia)
 
-- **Live Demo**: https://tenso.network
-- **Documentation**: https://tenso.network/docs
-- **GitHub Repo**: https://github.com/azharpratama/tenso
-- **Base Sepolia Explorer**: https://sepolia.basescan.org/
+- **PaymentRouter:** [`0x6fa35e1f6ab4291432b36f16578614e90750b7e6`](https://sepolia.basescan.org/address/0x6fa35e1f6ab4291432b36f16578614e90750b7e6)
+- **PaymentVerifier:** [`0xa73d7c7703b23cc4692fdd817345ad29db5ac4e9`](https://sepolia.basescan.org/address/0xa73d7c7703b23cc4692fdd817345ad29db5ac4e9)
+- **NodeRegistry:** [`0x5b2222610e04380e1caf3988d88fbd15686a1b6c`](https://sepolia.basescan.org/address/0x5b2222610e04380e1caf3988d88fbd15686a1b6c)
+- **GitHub Repository:** [azharpratama/tenso](https://github.com/azharpratama/tenso)
+- **Base Sepolia Explorer:** [sepolia.basescan.org](https://sepolia.basescan.org/)
 
 ---
 
 <div align="center">
 
-**Built for PinGo Indonesian DePIN Hackathon 2025** 🚀
+**Built for PinGo Indonesian DePIN Hackathon 2025** 🚀  
+Top 6 Finalist — Pitch & Demo Day
 
-[GitHub](https://github.com/azharpratama/tenso) • [Demo](https://tenso.network) • [Docs](https://tenso.network/docs)
+[GitHub](https://github.com/azharpratama/tenso) • [Architecture](PRD.md) • [Contracts](contracts/)
 
 </div>
